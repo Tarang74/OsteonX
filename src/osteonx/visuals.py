@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from mayavi import mlab
 from typing import Tuple
 
 
@@ -115,6 +114,8 @@ def plot_surfaces_3d(
     Returns:
         mayavi.mlab.Figure or None: The mayavi figure if rendering succeeded.
     """
+    from mayavi import mlab
+    
     f = mlab.figure(size=(1000, 800), bgcolor=(1, 1, 1))
 
     tcount = phi.shape[3]
@@ -163,6 +164,8 @@ def plot_nodes_3d(
     Returns:
         mayavi.mlab.Figure or None: The mayavi figure if rendering succeeded.
     """
+    from mayavi import mlab
+
     f = mlab.figure(size=(1000, 800), bgcolor=(1, 1, 1))
 
     # Plot nodes as points
@@ -220,6 +223,8 @@ def plot_segments_3d(
     Returns:
         mayavi.mlab.Figure or None: The mayavi figure if rendering succeeded.
     """
+    from mayavi import mlab
+
     f = mlab.figure(size=(1000, 800), bgcolor=(1, 1, 1))
 
     # Plot nodes as points
