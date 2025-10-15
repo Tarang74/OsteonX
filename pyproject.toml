@@ -12,7 +12,6 @@ license = {text = "MIT"}
 authors = [{name = "Tarang Janawalkar"}]
 
 dependencies = [
-  "mayavi==4.8.1",
   "numpy",
   "edt",
   "pandas",

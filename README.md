@@ -35,30 +35,33 @@ Honours thesis at the Queensland University of Technology (QUT), titled
 ## Installation
 
 It is recommended that this package is installed within a virtual
-environment using or `conda`. `venv` support is limited due to build
-issues with `mayavi`.
+environment using `venv` or `conda`. Mayavi is required for 3D
+visualisation however installation instructions will be provided in the
+future. Please refer to [Mayavi's documentation](https://docs.enthought.com/mayavi/mayavi/)
+for further details.
 
 ```bash
-conda create -n osteonx mayavi=4.8.1 python==3.11.8
+# Using venv (using Python 3.9 to 3.12)
+python -m venv osteonx-env
+source osteonx-env/bin/activate
+pip install git+https://github.com/tarang74/osteonx.git
+
+# Using conda
+conda create -n osteonx "python<3.13"
 conda activate osteonx
-pip install edt pandas scipy scikit-image matplotlib
-```
-
-Install the package using pip:
-
-```bash
-pip install git+github.com/tarang74/osteonx.git
+pip install git+https://github.com/tarang74/osteonx.git
 ```
 
 ### Basic Usage
 
 ```python
 from pathlib import Path
-from osteonx import io, analysis, smooth, visuals
+from osteonx import io, analysis, visuals
 
 # 1. Import 3D image stack
 osteon = io.import_masks(
-    path=Path("data/image-masks"),
+    path=Path("masks"),
+    downsample=(2, 2, 1),
     um_per_voxel=(0.379, 0.379, 0.296),
 )
 
@@ -66,14 +69,10 @@ osteon = io.import_masks(
 dts = analysis.compute_edt(osteon, path=Path("arrays"))
 
 # 3. Interpolate surfaces
-phi = analysis.interpolate_surfaces(osteon, dts, tsamples=20)
+t, phi = analysis.interpolate_surfaces(osteon, dts, tsamples=20)
 
 # 4. Visualise
-fig, ax = visuals.plot_surfaces_2d(phi, layer=phi.shape[2]//2)
-
-fig.savefig("figures/lamellar_growth_2d.png", dpi=300, bbox_inches="tight")
-fig.show()
-plt.close(fig)
+visuals.plot_surfaces_2d(phi, layers=(phi.shape[2]//2,), out="figures/lamellar_growth_2d.png")
 ```
 
 ## Examples
