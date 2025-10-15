@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling >= 1.26"]
+build-backend = "hatchling.build"
+
+[project]
+name = "osteonx"
+version = "1.0.0"
+description = "A Python library for osteocyte network analysis using confocal laser scanning microscopy data segmented with the Tool for Image and Network Analysis (TINA), providing lamellar surface reconstruction and temporal quantification of cellular and dendritic densities via interpolated 3D Euclidean distance transforms (MLAEDT-3D)."
+readme = "README.md"
+requires-python = ">=3.9,<3.13"
+license = {text = "MIT"}
+authors = [{name = "Tarang Janawalkar"}]
+
+dependencies = [
+  "mayavi==4.8.1",
+  "numpy",
+  "edt",
+  "pandas",
+  "scipy",
+  "scikit-image",
+  "matplotlib",
+]
+
+[tool.hatchling.build.targets.wheel]
+packages = ["src/osteonx"]
+
+[tool.hatchling.build.target.sdist]
+include = [
+  "src/osteonx",
+  "README.md",
+  "LICENSE",
+]
