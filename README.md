@@ -36,19 +36,24 @@ Honours thesis at the Queensland University of Technology (QUT), titled
 
 It is recommended that this package is installed within a virtual
 environment using `venv` or `conda`. Mayavi is required for 3D
-visualisation however installation instructions will be provided in the
-future. Please refer to [Mayavi's documentation](https://docs.enthought.com/mayavi/mayavi/)
-for further details.
+visualisation, but due to VTK API compatibility issues, it is highly
+recommended to install Mayavi using `conda-forge` which provides
+pre-built binaries with compatible dependencies.
 
 ```bash
-# Using venv (using Python 3.9 to 3.12)
-python -m venv osteonx-env
-source osteonx-env/bin/activate
-pip install git+https://github.com/tarang74/osteonx.git
-
 # Using conda
 conda create -n osteonx "python<3.13"
 conda activate osteonx
+conda install -c conda-forge mayavi
+conda remove qt-main pyqt # Conda might install multiple Qt versions
+pip install git+https://github.com/tarang74/osteonx.git
+
+# Using venv
+# Mayavi 4.8.1-4.8.2 has been tested on Python 3.11
+# Mayavi 4.8.3 has been tested on Python 3.12
+python -m venv osteonx-env
+source osteonx-env/bin/activate
+pip install "mayavi==<version>"
 pip install git+https://github.com/tarang74/osteonx.git
 ```
 
