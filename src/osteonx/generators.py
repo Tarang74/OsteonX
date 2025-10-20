@@ -347,7 +347,8 @@ def lattice_polylines_cartesian(
     center: Tuple[float, float],
     S_outer: float,
     S_inner: float,
-    r_samples: int,
+    x_samples: int,
+    y_samples: int,
     z_samples: int,
 ) -> Tuple[np.ndarray, np.ndarray]:
     """Generate cardinal polylines for a square prism.
@@ -357,44 +358,53 @@ def lattice_polylines_cartesian(
         center: (x0, y0) center in the x-y plane.
         S_outer: Outer side length.
         S_inner: Inner side length.
-        r_samples: Radial sample count.
-        z_samples: Z-layer sample count.
+        x_samples: Number of x samples.
+        y_samples: Number of y samples.
+        z_samples: Number of z samples.
 
     Returns:
         Tuple[ndarray, ndarray]: (segments, deltas) arrays.
     """
-    x0, y0 = center
-    z_layers = shape[2]
+    dx = (S_outer - S_inner) / x_samples
+    dy = (S_outer - S_inner) / y_samples
 
-    dr = (S_outer - S_inner) / r_samples
-    rvals = np.linspace(S_inner, S_outer, r_samples, endpoint=False) + dr / 2
-
-    directions = [
-        np.array([1, 0]),
-        np.array([-1, 0]),
-        np.array([0, 1]),
-        np.array([0, -1]),
-    ]
-
-    z_vals = np.linspace(0, z_layers, z_samples, endpoint=False)
+    z = np.linspace(0, shape[2], z_samples, endpoint=False)
 
     segments = []
     deltas = []
 
-    for direction in directions:
-        for z_val in z_vals:
-            for ri in range(r_samples - 1):
-                r1 = rvals[ri]
-                r2 = rvals[ri + 1]
+    for xi in range(x_samples - 1):
+        x_pos = center[0] + S_inner + xi * dx + dx / 2
+        x_neg = center[0] - S_inner - xi * dx - dx / 2
 
-                x1 = x0 + direction[0] * r1
-                y1 = y0 + direction[1] * r1
+        for yi in range(y_samples - 1):
+            y_pos = center[1] + S_inner + yi * dy + dy / 2
+            y_neg = center[1] - S_inner - yi * dy - dy / 2
 
-                x2 = x0 + direction[0] * r2
-                y2 = y0 + direction[1] * r2
+            for zc in z:
+                # Positive x direction
+                segments.append([x_pos, center[1] + yi * dy + dy / 2, zc])
+                deltas.append([dx, 0, 0])
+                segments.append([x_pos, center[1] - yi * dy - dy / 2, zc])
+                deltas.append([dx, 0, 0])
 
-                segments.append([x1, y1, z_val])
-                deltas.append([x2 - x1, y2 - y1, 0])
+                # Negative x direction
+                segments.append([x_neg, center[1] + yi * dy + dy / 2, zc])
+                deltas.append([-dx, 0, 0])
+                segments.append([x_neg, center[1] - yi * dy - dy / 2, zc])
+                deltas.append([-dx, 0, 0])
+
+                # Positive y direction
+                segments.append([center[0] + xi * dx + dx / 2, y_pos, zc])
+                deltas.append([0, dy, 0])
+                segments.append([center[0] - xi * dx - dx / 2, y_pos, zc])
+                deltas.append([0, dy, 0])
+
+                # Negative y direction
+                segments.append([center[0] + xi * dx + dx / 2, y_neg, zc])
+                deltas.append([0, -dy, 0])
+                segments.append([center[0] - xi * dx - dx / 2, y_neg, zc])
+                deltas.append([0, -dy, 0])
 
     return np.array(segments), np.array(deltas)
 

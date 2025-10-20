@@ -157,18 +157,18 @@ def find_surface_density(
         deltas: (N, 3) segment deltas (voxels).
 
     Returns:
-        Tuple[ndarray, ndarray]: (counts, areas) per layer.
+        Tuple[ndarray, ndarray]: (counts, areas) per layer, except the boundary layers.
     """
     tsamples = phi.shape[3] - 1
-    counts = np.zeros(tsamples, dtype=int)
-    areas = np.zeros(tsamples, dtype=float)
+    counts = np.zeros(tsamples - 1, dtype=int)
+    areas = np.zeros(tsamples - 1, dtype=float)
 
     segments_int = np.floor(segments).astype(int)
 
-    for ti in range(tsamples):
+    for i, ti in enumerate(range(1, tsamples)):
         surface_mask = phi[:, :, :, ti]
-        counts[ti] = _count_segment_intersections(surface_mask, segments_int, deltas)
-        areas[ti] = _find_surface_area(surface_mask, osteon.um_per_voxel)
+        counts[i] = _count_segment_intersections(surface_mask, segments_int, deltas)
+        areas[i] = _find_surface_area(surface_mask, osteon.um_per_voxel)
 
     return counts, areas
 

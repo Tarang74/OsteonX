@@ -52,7 +52,7 @@ def plot_results(t, counts, volumes, densities, filename):
     axs[2].legend()
 
     plt.tight_layout()
-    plt.savefig(f"figures/{filename}.png", dpi=300, bbox_inches="tight")
+    plt.savefig(f"tests/figures/{filename}.png", dpi=300, bbox_inches="tight")
     plt.close(fig)
 
 
@@ -105,11 +105,11 @@ def test_spheres():
         assert count == expected_count
         assert np.isclose(volume, expected_volume, rtol=0.1)
 
-    plot_results(t, counts, volumes, densities, "sphere")
+    plot_results(t, counts, volumes, densities, "test_sphere_nodes")
     plot_nodes_with_surface_2d(
-        nodes, phi, layer=SHAPE[2] // 2, out="figures/test_sphere_2d.png"
+        nodes, phi, layer=SHAPE[2] // 2, out="tests/figures/test_sphere_2d.png"
     )
-    plot_nodes_3d(nodes, phi, out="figures/test_sphere_3d.png", distance=200)
+    plot_nodes_3d(nodes, phi, out="tests/figures/test_sphere_3d.png", distance=200)
 
 
 def test_cylinders():
@@ -161,11 +161,11 @@ def test_cylinders():
         assert count == expected_count
         assert np.isclose(volume, expected_volume, rtol=0.1)
 
-    plot_results(t, counts, volumes, densities, "cylinder")
+    plot_results(t, counts, volumes, densities, "test_cylinder_nodes")
     plot_nodes_with_surface_2d(
-        nodes, phi, layer=SHAPE[2] // 2, out="figures/test_cylinder_2d.png"
+        nodes, phi, layer=0, out="tests/figures/test_cylinder_2d.png"
     )
-    plot_nodes_3d(nodes, phi, out="figures/test_cylinder_3d.png", distance=600)
+    plot_nodes_3d(nodes, phi, out="tests/figures/test_cylinder_3d.png", distance=600)
 
 
 def test_prisms():
@@ -201,8 +201,6 @@ def test_prisms():
     counts, volumes = find_density(phi, nodes)
     volumes = scale_to_physical(volumes, osteon, dim=3)
 
-    print("Counts:", counts)
-    print("Volumes:", volumes)
     densities = counts / volumes
 
     dx = (outer_side - inner_side) / x_samples
@@ -229,8 +227,8 @@ def test_prisms():
         assert count == expected_count
         assert np.isclose(volume, expected_volume, rtol=0.1)
 
-    plot_results(t, counts, volumes, densities, "prism")
+    plot_results(t, counts, volumes, densities, "test_prism_nodes")
     plot_nodes_with_surface_2d(
-        nodes, phi, layer=SHAPE[2] // 2, out="figures/test_prism_2d.png"
+        nodes, phi, layer=0, out="tests/figures/test_prism_2d.png"
     )
-    plot_nodes_3d(nodes, phi, out="figures/test_prism_3d.png", distance=600)
+    plot_nodes_3d(nodes, phi, out="tests/figures/test_prism_3d.png", distance=600)

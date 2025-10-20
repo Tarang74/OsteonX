@@ -4,36 +4,6 @@ import numpy as np
 from typing import Tuple
 
 
-def plot_nodes_2d(nodes: np.ndarray, dims=None, out: str | None = None):
-    """Plot nodes as a 2D x-y projection.
-
-    Args:
-        nodes: (N, 3) node coordinates.
-        dims: Optional (width, height) axis limits.
-        out: Optional file path to save the figure.
-
-    Returns:
-        tuple: (matplotlib.figure.Figure, matplotlib.axes.Axes)
-    """
-    fig, ax = plt.subplots(figsize=(8, 8))
-    x, y, z = nodes.T
-    ax.plot(x, y, ".", markersize=0.5)
-
-    ax.set_aspect(1)
-    if dims:
-        ax.set_xlim(0, dims[0])
-        ax.set_ylim(0, dims[1])
-    ax.set_xticks([])
-    ax.set_yticks([])
-    ax.set_xticklabels([])
-    ax.set_yticklabels([])
-    ax.set_axis_off()
-
-    if out:
-        fig.savefig(out, dpi=300, bbox_inches="tight")
-    return fig, ax
-
-
 def plot_surfaces_2d(
     phi: np.ndarray,
     layers: Tuple[int] = tuple(),
@@ -318,10 +288,21 @@ def plot_segments_with_surface_2d(
     segments_in_layer = segments[np.abs(segments[:, 2] - layer) < 5]
     deltas_in_layer = deltas[np.abs(segments[:, 2] - layer) < 5]
 
-    for segment, delta in zip(segments_in_layer, deltas_in_layer):
-        start = segment[:2]
-        end = start + delta[:2]
-        ax.plot([start[1], end[1]], [start[0], end[0]], c="blue", linewidth=0.5)
+    # Quiver plot for segments
+    ax.quiver(
+        segments_in_layer[:, 1],
+        segments_in_layer[:, 0],
+        deltas_in_layer[:, 1],
+        deltas_in_layer[:, 0],
+        angles="xy",
+        scale_units="xy",
+        scale=1,
+        color="blue",
+        alpha=0.5,
+    )
+
+    # Plot segment start points
+    ax.scatter(segments_in_layer[:, 1], segments_in_layer[:, 0], c="red", s=5)
 
     if out:
         fig.savefig(out, dpi=300, bbox_inches="tight")

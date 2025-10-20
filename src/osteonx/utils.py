@@ -69,7 +69,7 @@ def smooth(
     """Apply smoothing spline to two data points.
 
     Args:
-        t: Time or normalized parameter array.
+        t: Time or normalised parameter array.
         data: Data arrays to be smoothed.
         lam: Smoothing parameter (higher -> smoother).
         upsample: Output upsampling factor.

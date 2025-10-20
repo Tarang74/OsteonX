@@ -80,6 +80,8 @@ t, phi = analysis.interpolate_surfaces(osteon, dts, tsamples=20)
 visuals.plot_surfaces_2d(phi, layers=(phi.shape[2]//2,), out="figures/lamellar_growth_2d.png")
 ```
 
+![Basic Usage Example](examples/figures/readme.png)
+
 ## Examples
 
 Three example scripts are provided in the [examples/](examples/) directory:
@@ -90,23 +92,31 @@ Three example scripts are provided in the [examples/](examples/) directory:
    python examples/lamellar_growth_approximation.py --help
    ```
 
+   ![Lamellar Growth Approximation Example](examples/figures/lamellar_growth_2d.png)
+
 2. **`node_density_analysis.py`** - Osteocyte density analysis
 
    ```bash
    python examples/node_density_analysis.py --help
    ```
 
-3. **`segment_density_analysis.py`** - Dendritic surface density analysis
+   ![Node Density Analysis Example](examples/figures/node_density.png)
+
+3. **`segment_surface_density_analysis.py`** - Dendritic surface density analysis
 
    ```bash
-   python examples/segment_density_analysis.py --help
+   python examples/segment_surface_density_analysis.py --help
    ```
 
-4. **`derivative_methods_comparison.py`** - Comparison of derivative methods for density estimatio
+   ![Segment Surface Density Analysis Example](examples/figures/segment_surface_density.png)
+
+4. **`derivative_methods_comparison.py`** - Comparison of derivative methods for density estimation
 
    ```bash
    python examples/derivative_methods_comparison.py --help
    ```
+
+   ![Derivative Methods Comparison Example](examples/figures/derivative_methods_density.png)
 
 ## Testing
 
@@ -121,3 +131,5 @@ These tests can be run using:
 ```bash
 python -m pytest tests/
 ```
+
+Test output figures have been compiled in [tests/README.md](tests/README.md).

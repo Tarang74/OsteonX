@@ -1,7 +1,7 @@
 """
 Segment Surface Density Analysis Example
 
-This script analyzes the spatial distribution of dendritic processes (segments) within osteon structures.
+This script analyses the spatial distribution of dendritic processes (segments) within osteon structures.
 It computes segment surface density as a function of lamellar growth surfaces using smoothed spline interpolation.
 
 The surface density is calculated as:
@@ -121,7 +121,7 @@ def main():
 
     # Smooth counts and surface areas separately
     t2, (s_cumulative_counts, s_cumulative_surface_areas) = utils.smooth(
-        t,
+        t[:-1],
         (cumulative_counts, cumulative_surface_areas),
         lam=args.lam,
         upsample=args.upsample,
@@ -131,25 +131,25 @@ def main():
     fig, (axs1, axs2) = plt.subplots(2, 2, figsize=(12, 10))
 
     # Cumulative counts
-    axs1[0].plot(t, cumulative_counts, "o", markersize=4, label="$N(t)$")
+    axs1[0].plot(t[:-1], cumulative_counts, "o", markersize=4, label="$N(t)$")
     axs1[0].plot(t2, s_cumulative_counts(t2), "r-", linewidth=2, label="$s(N(t))$")
-    axs1[0].set_xlabel("Normalized Time")
+    axs1[0].set_xlabel("Normalised Time")
     axs1[0].set_ylabel("Count")
     axs1[0].set_title("Cumulative Segment Count")
     axs1[0].legend()
 
     # Cumulative surface areas
-    axs1[1].plot(t, cumulative_surface_areas, "o", markersize=4, label="$A(t)$")
+    axs1[1].plot(t[:-1], cumulative_surface_areas, "o", markersize=4, label="$A(t)$")
     axs1[1].plot(
         t2, s_cumulative_surface_areas(t2), "r-", linewidth=2, label="$s(A(t))$"
     )
-    axs1[1].set_xlabel("Normalized Time")
+    axs1[1].set_xlabel("Normalised Time")
     axs1[1].set_ylabel("Surface Area (µm²)")
     axs1[1].set_title("Cumulative Surface Area")
     axs1[1].legend()
 
     # Counts
-    axs2[0].plot(t[:-1], counts, "o", markersize=4, label="Raw counts")
+    axs2[0].plot(t[1:-1], counts, "o", markersize=4, label="Raw counts")
     axs2[0].plot(
         t2,
         s_cumulative_counts.derivative()(t2) * dt,
@@ -157,14 +157,14 @@ def main():
         linewidth=2,
         label="$s'(N(t))$",
     )
-    axs2[0].set_xlabel("Normalized Time")
+    axs2[0].set_xlabel("Normalised Time")
     axs2[0].set_ylabel("Count")
     axs2[0].set_title("Segment Count")
     axs2[0].legend()
 
     # Surface areas
     axs2[1].plot(
-        t[:-1], surface_areas_physical, "o", markersize=4, label="Raw surface areas"
+        t[1:-1], surface_areas_physical, "o", markersize=4, label="Raw surface areas"
     )
     axs2[1].plot(
         t2,
@@ -173,7 +173,7 @@ def main():
         linewidth=2,
         label="$s'(A(t))$",
     )
-    axs2[1].set_xlabel("Normalized Time")
+    axs2[1].set_xlabel("Normalised Time")
     axs2[1].set_ylabel("Surface Area ($µm^2$)")
     axs2[1].set_title("Surface Area")
     axs2[1].legend()
@@ -194,7 +194,7 @@ def main():
     # Plot surface density profile
     fig, ax = plt.subplots(figsize=(10, 6))
     ax.plot(
-        t[:-1],
+        t[1:-1],
         counts / surface_areas_physical,
         "o",
         markersize=4,
@@ -203,7 +203,7 @@ def main():
     ax.plot(
         t2, surface_density_smooth, "r-", linewidth=2, label="$s'(N(t)) / s'(A(t))$"
     )
-    ax.set_xlabel("Normalized time", fontsize=12)
+    ax.set_xlabel("Normalised Time", fontsize=12)
     ax.set_ylabel("Surface Density ($segments/µm^2$)", fontsize=12)
     ax.set_title("Segment Surface Density", fontsize=14, fontweight="bold")
 
