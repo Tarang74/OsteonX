@@ -1,12 +1,12 @@
 """
-Node Density Analysis Example
+Cell Density Analysis Example
 
-This script analyzes the spatial distribution of osteocytes (nodes) within osteon structures.
-It computes node density as a function of lamellar growth surfaces using smoothed spline interpolation.
+This script analyzes the spatial distribution of osteocytes (cells) within osteon structures.
+It computes cell density as a function of lamellar growth surfaces using smoothed spline interpolation.
 
 The density is calculated as:
     ρ(t) = N'(t) / V'(t)
-where N(t) is the cumulative node count and V(t) is the cumulative volume.
+where N(t) is the cumulative cell count and V(t) is the cumulative volume.
 """
 
 import argparse
@@ -31,10 +31,10 @@ def parse_arguments():
         help="Directory containing 3D image masks of osteon",
     )
     parser.add_argument(
-        "--node-csv",
+        "--cell-csv",
         type=str,
-        default="node.csv",
-        help="Node CSV filename (default: node.csv)",
+        default="cell.csv",
+        help="Cell CSV filename (default: cell.csv)",
     )
     parser.add_argument(
         "--downsample",
@@ -80,7 +80,7 @@ def main():
     args = parse_arguments()
 
     masks_path = Path(args.data_dir)
-    node_csv_path = Path(args.node_csv)
+    cell_csv_path = Path(args.cell_csv)
 
     arrays_output_path = Path(args.array_dir)
     arrays_output_path.mkdir(parents=True, exist_ok=True)
@@ -97,9 +97,9 @@ def main():
         inner_mask_color=(255, 0, 0),
     )
 
-    # Import node data
-    nodes = io.import_tina_nodes(
-        csv_path=node_csv_path,
+    # Import cell data
+    cells = io.import_tina_cells(
+        csv_path=cell_csv_path,
         osteon=osteon,
         filter_cells=True,
         filter_cellnodes=True,
@@ -117,8 +117,8 @@ def main():
     t, phi = analysis.interpolate_surfaces(osteon, dts, tsamples=args.tsamples)
     dt = t[1] - t[0]
 
-    # Count nodes and measure volumes
-    counts, volumes = analysis.find_density(phi, nodes)
+    # Count cells and measure volumes
+    counts, volumes = analysis.find_density(phi, cells)
     volumes_physical = utils.scale_to_physical(volumes, osteon)
 
     cumulative_counts = np.cumsum(np.hstack([0, counts]))
@@ -140,7 +140,7 @@ def main():
     axs1[0].plot(t2, s_cumulative_counts(t2), "r-", linewidth=2, label="$s(N(t))$")
     axs1[0].set_xlabel("Normalised Time")
     axs1[0].set_ylabel("Count")
-    axs1[0].set_title("Cumulative Node Count")
+    axs1[0].set_title("Cumulative Cell Count")
     axs1[0].legend()
 
     # Cumulative volumes
@@ -152,7 +152,7 @@ def main():
     axs1[1].legend()
 
     # Counts
-    axs2[0].plot(t[:-1], counts, "o", markersize=4, label="Raw counts")
+    axs2[0].plot(t[:-1], counts, "o", markersize=4, label="$\\Delta N$")
     axs2[0].plot(
         t2,
         s_cumulative_counts.derivative()(t2) * dt,
@@ -162,11 +162,11 @@ def main():
     )
     axs2[0].set_xlabel("Normalised Time")
     axs2[0].set_ylabel("Count")
-    axs2[0].set_title("Node Count")
+    axs2[0].set_title("Cell Count")
     axs2[0].legend()
 
     # Volumes
-    axs2[1].plot(t[:-1], volumes_physical, "o", markersize=4, label="Raw volumes")
+    axs2[1].plot(t[:-1], volumes_physical, "o", markersize=4, label="$\\Delta V$")
     axs2[1].plot(
         t2,
         s_cumulative_volumes.derivative()(t2) * dt,
@@ -181,7 +181,7 @@ def main():
 
     plt.tight_layout()
     fig.savefig(
-        str(figures_output_path / "node_cumulative.png"), dpi=300, bbox_inches="tight"
+        str(figures_output_path / "cell_cumulative.png"), dpi=300, bbox_inches="tight"
     )
     plt.close(fig)
 
@@ -192,26 +192,26 @@ def main():
 
     # Plot density profile
     fig, ax = plt.subplots(figsize=(10, 6))
-    ax.plot(t[:-1], counts / volumes_physical, "o", markersize=4, label="Raw Density")
-    ax.plot(t2, density_smooth, "r-", linewidth=2, label="$s'(N(t)) / s'(V(t))$")
+    ax.plot(t[:-1], counts / volumes_physical, "o", markersize=4, label="$\\rho(t)$")
+    ax.plot(t2, density_smooth, "r-", linewidth=2, label="$\\tilde\\rho(t)$")
     ax.set_xlabel("Normalised Time", fontsize=12)
-    ax.set_ylabel("Density ($nodes/µm^3$)", fontsize=12)
+    ax.set_ylabel("Density ($cell/µm^3$)", fontsize=12)
     ax.set_title("Cell Density", fontsize=14, fontweight="bold")
     ax.legend()
 
     plt.tight_layout()
     fig.savefig(
-        str(figures_output_path / "node_density.png"),
+        str(figures_output_path / "cell_density.png"),
         dpi=300,
         bbox_inches="tight",
     )
     plt.close(fig)
 
-    # Plot 3D visualization with nodes
-    fig = visuals.plot_nodes_3d(
-        nodes=nodes,
+    # Plot 3D visualization with cells
+    fig = visuals.plot_cells_3d(
+        cells=cells,
         phi=phi,
-        out=str(figures_output_path / "nodes_3d.png"),
+        out=str(figures_output_path / "cells_3d.png"),
     )
 
 

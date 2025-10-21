@@ -5,8 +5,8 @@ This script analyses the spatial distribution of dendritic processes (segments) 
 It computes segment surface density as a function of lamellar growth surfaces using smoothed spline interpolation.
 
 The surface density is calculated as:
-    ρ(t) = N'(t) / A'(t)
-where N(t) is the cumulative segment count and A(t) is the cumulative surface area.
+    ρ(t) = I(t) / A(t)
+where I(t) is the segment intersection count and A(t) is the surface area.
 """
 
 import argparse
@@ -116,80 +116,57 @@ def main():
     counts, surface_areas = analysis.find_surface_density(phi, osteon, segments, deltas)
     surface_areas_physical = utils.scale_to_physical(surface_areas, osteon, dim=2)
 
-    cumulative_counts = np.cumsum(np.hstack([0, counts]))
-    cumulative_surface_areas = np.cumsum(np.hstack([0, surface_areas_physical]))
-
     # Smooth counts and surface areas separately
-    t2, (s_cumulative_counts, s_cumulative_surface_areas) = utils.smooth(
-        t[:-1],
-        (cumulative_counts, cumulative_surface_areas),
+    t2, (s_counts, s_surface_areas) = utils.smooth(
+        t[1:-1],
+        (counts, surface_areas_physical),
         lam=args.lam,
         upsample=args.upsample,
     )
 
     # Plot cumulative counts and surface areas
-    fig, (axs1, axs2) = plt.subplots(2, 2, figsize=(12, 10))
-
-    # Cumulative counts
-    axs1[0].plot(t[:-1], cumulative_counts, "o", markersize=4, label="$N(t)$")
-    axs1[0].plot(t2, s_cumulative_counts(t2), "r-", linewidth=2, label="$s(N(t))$")
-    axs1[0].set_xlabel("Normalised Time")
-    axs1[0].set_ylabel("Count")
-    axs1[0].set_title("Cumulative Segment Count")
-    axs1[0].legend()
-
-    # Cumulative surface areas
-    axs1[1].plot(t[:-1], cumulative_surface_areas, "o", markersize=4, label="$A(t)$")
-    axs1[1].plot(
-        t2, s_cumulative_surface_areas(t2), "r-", linewidth=2, label="$s(A(t))$"
-    )
-    axs1[1].set_xlabel("Normalised Time")
-    axs1[1].set_ylabel("Surface Area (µm²)")
-    axs1[1].set_title("Cumulative Surface Area")
-    axs1[1].legend()
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10))
 
     # Counts
-    axs2[0].plot(t[1:-1], counts, "o", markersize=4, label="Raw counts")
-    axs2[0].plot(
+    ax1.plot(t[1:-1], counts, "o", markersize=4, label="I(t)")
+    ax1.plot(
         t2,
-        s_cumulative_counts.derivative()(t2) * dt,
+        s_counts(t2),
         "r-",
         linewidth=2,
-        label="$s'(N(t))$",
+        label="$s(I(t))$",
     )
-    axs2[0].set_xlabel("Normalised Time")
-    axs2[0].set_ylabel("Count")
-    axs2[0].set_title("Segment Count")
-    axs2[0].legend()
+    ax1.set_xlabel("Normalised Time")
+    ax1.set_ylabel("Count")
+    ax1.set_title("Segment Count")
+    ax1.legend()
 
     # Surface areas
-    axs2[1].plot(
-        t[1:-1], surface_areas_physical, "o", markersize=4, label="Raw surface areas"
+    ax2.plot(
+        t[1:-1], surface_areas_physical, "o", markersize=4, label="A(t)"
     )
-    axs2[1].plot(
+    ax2.plot(
         t2,
-        s_cumulative_surface_areas.derivative()(t2) * dt,
+        s_surface_areas(t2),
         "r-",
         linewidth=2,
-        label="$s'(A(t))$",
+        label="$s(A(t))$",
     )
-    axs2[1].set_xlabel("Normalised Time")
-    axs2[1].set_ylabel("Surface Area ($µm^2$)")
-    axs2[1].set_title("Surface Area")
-    axs2[1].legend()
+    ax2.set_xlabel("Normalised Time")
+    ax2.set_ylabel("Surface Area ($µm^2$)")
+    ax2.set_title("Surface Area")
+    ax2.legend()
 
     plt.tight_layout()
     fig.savefig(
-        str(figures_output_path / "segment_cumulative.png"),
+        str(figures_output_path / "segment_counts_areas.png"),
         dpi=300,
         bbox_inches="tight",
     )
     plt.close(fig)
 
     # Surface density
-    surface_density_smooth = s_cumulative_counts.derivative()(
-        t2
-    ) / s_cumulative_surface_areas.derivative()(t2)
+    surface_density_smooth = s_counts(t2) / s_surface_areas(t2)
 
     # Plot surface density profile
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -198,14 +175,13 @@ def main():
         counts / surface_areas_physical,
         "o",
         markersize=4,
-        label="Raw Surface Density",
+        label="$\\rho_A(t)$",
     )
-    ax.plot(
-        t2, surface_density_smooth, "r-", linewidth=2, label="$s'(N(t)) / s'(A(t))$"
-    )
+    ax.plot(t2, surface_density_smooth, "r-", linewidth=2, label="$\\tilde\\rho_A(t)$")
     ax.set_xlabel("Normalised Time", fontsize=12)
-    ax.set_ylabel("Surface Density ($segments/µm^2$)", fontsize=12)
-    ax.set_title("Segment Surface Density", fontsize=14, fontweight="bold")
+    ax.set_ylabel("Surface Density ($intersection/µm^2$)", fontsize=12)
+    ax.set_title("Segment Intersection Surface Density", fontsize=14, fontweight="bold")
+    ax.legend()
 
     plt.tight_layout()
     fig.savefig(

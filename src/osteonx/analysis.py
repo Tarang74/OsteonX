@@ -116,12 +116,12 @@ def interpolate_surfaces(
     return tvals, phi
 
 
-def find_density(phi: np.ndarray, nodes: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
-    """Compute node counts and volumes between layer defined by `phi`.
+def find_density(phi: np.ndarray, cells: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
+    """Compute cell counts and volumes between layer defined by `phi`.
 
     Args:
         phi: (W, H, D, T) level-set array defining T layers.
-        nodes: (N, 3) voxel coordinates (float or int).
+        cells: (N, 3) voxel coordinates (float or int).
 
     Returns:
         Tuple[ndarray, ndarray]: (counts, volumes) per layer.
@@ -130,13 +130,13 @@ def find_density(phi: np.ndarray, nodes: np.ndarray) -> Tuple[np.ndarray, np.nda
     counts = np.zeros(tsamples, dtype=int)
     volumes = np.zeros(tsamples, dtype=int)
 
-    nodes_int = np.floor(nodes).astype(int)
+    cells_int = np.floor(cells).astype(int)
 
     for ti in range(tsamples):
         region_mask = np.logical_and(
             phi[:, :, :, ti] >= 0, phi[:, :, :, ti + 1] < 0
         )
-        counts[ti] = _count_nodes_in_region(region_mask, nodes_int)
+        counts[ti] = _count_cells_in_region(region_mask, cells_int)
         volumes[ti] = _find_volume(region_mask)
 
     return counts, volumes
@@ -157,43 +157,43 @@ def find_surface_density(
         deltas: (N, 3) segment deltas (voxels).
 
     Returns:
-        Tuple[ndarray, ndarray]: (counts, areas) per layer, except the boundary layers.
+        Tuple[ndarray, ndarray]: (counts, surface_areas) per layer, except the boundary layers.
     """
     tsamples = phi.shape[3] - 1
     counts = np.zeros(tsamples - 1, dtype=int)
-    areas = np.zeros(tsamples - 1, dtype=float)
+    surface_areas = np.zeros(tsamples - 1, dtype=float)
 
     segments_int = np.floor(segments).astype(int)
 
     for i, ti in enumerate(range(1, tsamples)):
         surface_mask = phi[:, :, :, ti]
         counts[i] = _count_segment_intersections(surface_mask, segments_int, deltas)
-        areas[i] = _find_surface_area(surface_mask, osteon.um_per_voxel)
+        surface_areas[i] = _find_surface_area(surface_mask, osteon.um_per_voxel)
 
-    return counts, areas
+    return counts, surface_areas
 
 
-def _count_nodes_in_region(region_mask: np.ndarray, nodes: np.ndarray) -> int:
-    """Count nodes that lie inside the boolean region mask.
+def _count_cells_in_region(region_mask: np.ndarray, cells: np.ndarray) -> int:
+    """Count cells that lie inside the boolean region mask.
 
     Args:
         region_mask: Boolean array of shape (W, H, D).
-        nodes: (N, 3) integer voxel coordinates.
+        cells: (N, 3) integer voxel coordinates.
 
     Returns:
-        int: Number of nodes inside the region.
+        int: Number of cells inside the region.
 
     Raises:
-        TypeError: if `nodes` is not of integer dtype.
+        TypeError: if `cells` is not of integer dtype.
     """
-    if not np.issubdtype(nodes.dtype, np.integer):
+    if not np.issubdtype(cells.dtype, np.integer):
         raise TypeError(
-            f"nodes must have integer dtype, got {nodes.dtype}. "
+            f"cells must have integer dtype, got {cells.dtype}. "
             "Convert to integer coordinates before calling this function."
         )
 
     count = 0
-    for x, y, z in nodes:
+    for x, y, z in cells:
         xi, yi, zi = int(x), int(y), int(z)
         if (
             0 <= xi < region_mask.shape[0]

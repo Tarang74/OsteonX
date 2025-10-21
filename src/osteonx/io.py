@@ -68,23 +68,23 @@ def import_masks(
     )
 
 
-def import_tina_nodes(
+def import_tina_cells(
     csv_path: Path,
     osteon: Osteon,
     filter_cells: bool = True,
     filter_cellnodes: bool = True,
 ):
-    """Import node data exported from TINA (CSV) and convert to voxel
+    """Import cell data exported from TINA (CSV) and convert to voxel
     coordinates.
 
     Args:
-        csv_path: Path to the node CSV file.
+        csv_path: Path to the cell CSV file.
         osteon: Osteon.
         filter_cells: Keep only rows where `cell`==1 when True.
         filter_cellnodes: Keep only rows where `cellnode`==1 when True.
 
     Returns:
-        ndarray: N x 3 array of node coordinates in voxel units.
+        ndarray: N x 3 array of cell coordinates in voxel units.
     """
     df = pd.read_csv(csv_path)
 
@@ -104,8 +104,8 @@ def import_tina_nodes(
     Y = df["y"] / Dy
     Z = df["z"] / Dz
 
-    nodes = np.vstack((X, Y, Z)).T
-    return nodes
+    cells = np.vstack((X, Y, Z)).T
+    return cells
 
 
 def import_tina_segments(

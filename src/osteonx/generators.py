@@ -100,7 +100,7 @@ def prisms(
     return outer, inner
 
 
-def lattice_nodes_spherical(
+def lattice_cells_spherical(
     shape: Tuple[int, int, int],
     center: Tuple[float, float, float],
     R_outer: float,
@@ -109,7 +109,7 @@ def lattice_nodes_spherical(
     theta_samples: int,
     phi_samples: int,
 ) -> np.ndarray:
-    """Generate lattice nodes in spherical coordinates.
+    """Generate lattice cells in spherical coordinates.
 
     Args:
         shape: Grid dimensions (width, height, depth).
@@ -121,7 +121,7 @@ def lattice_nodes_spherical(
         phi_samples: Number of polar samples.
 
     Returns:
-        ndarray: (N, 3) nodes as [x, y, z].
+        ndarray: (N, 3) cells as [x, y, z].
     """
     if R_outer > min(shape) / 2:
         raise ValueError("R_outer exceeds half the smallest shape dimension.")
@@ -142,7 +142,7 @@ def lattice_nodes_spherical(
     return np.stack([X.flatten(), Y.flatten(), Z.flatten()], axis=1)
 
 
-def lattice_nodes_cylindrical(
+def lattice_cells_cylindrical(
     shape: Tuple[int, int, int],
     center: Tuple[float, float],
     R_outer: float,
@@ -151,7 +151,7 @@ def lattice_nodes_cylindrical(
     theta_samples: int,
     z_samples: int,
 ) -> np.ndarray:
-    """Generate lattice nodes in cylindrical coordinates.
+    """Generate lattice cells in cylindrical coordinates.
 
     Args:
         shape: Grid dimensions (width, height, depth).
@@ -163,7 +163,7 @@ def lattice_nodes_cylindrical(
         z_samples: Number of z samples.
 
     Returns:
-        ndarray: (N, 3) nodes as [x, y, z].
+        ndarray: (N, 3) cells as [x, y, z].
     """
     if R_outer > min(shape[0], shape[1]) / 2:
         raise ValueError("R_outer exceeds half the smallest shape dimension.")
@@ -184,7 +184,7 @@ def lattice_nodes_cylindrical(
     return np.stack([X.flatten(), Y.flatten(), Z.flatten()], axis=1)
 
 
-def lattice_nodes_cartesian(
+def lattice_cells_cartesian(
     shape: Tuple[int, int, int],
     center: Tuple[float, float],
     S_outer: float,
@@ -193,7 +193,7 @@ def lattice_nodes_cartesian(
     y_samples: int,
     z_samples: int,
 ) -> np.ndarray:
-    """Generate lattice nodes in Cartesian coordinates.
+    """Generate lattice cells in Cartesian coordinates.
 
     Args:
         shape: Grid dimensions (width, height, depth).
@@ -205,7 +205,7 @@ def lattice_nodes_cartesian(
         z_samples: Number of z samples.
 
     Returns:
-        ndarray: (N, 3) nodes as [x, y, z].
+        ndarray: (N, 3) cells as [x, y, z].
     """
     dx = (S_outer - S_inner) / x_samples
     dy = (S_outer - S_inner) / y_samples
@@ -240,7 +240,7 @@ def lattice_polylines_spherical(
     theta_samples: int,
     phi_samples: int,
 ) -> Tuple[np.ndarray, np.ndarray]:
-    """Generate radial polylines from spherical lattice nodes.
+    """Generate radial polylines from spherical lattice cells.
 
     Args:
         shape: Grid dimensions (width, height, depth).
@@ -296,7 +296,7 @@ def lattice_polylines_cylindrical(
     theta_samples: int,
     z_samples: int,
 ) -> Tuple[np.ndarray, np.ndarray]:
-    """Generate radial polylines from cylindrical lattice nodes.
+    """Generate radial polylines from cylindrical lattice cells.
 
     Args:
         shape: Grid dimensions (width, height, depth).
@@ -409,60 +409,60 @@ def lattice_polylines_cartesian(
     return np.array(segments), np.array(deltas)
 
 
-def random_nodes_cylindrical(
-    n_nodes: int,
+def random_cells_cylindrical(
+    n_cells: int,
     shape: Tuple[int, int, int],
     center: Tuple[float, float],
     R_inner: float,
     R_outer: float,
 ) -> np.ndarray:
     """
-    Generate nodes uniformly distributed within a cylindrical mask.
+    Generate cells uniformly distributed within a cylindrical mask.
 
     Args:
-        n_nodes: Number of nodes to generate.
+        n_cells: Number of cells to generate.
         shape: Grid dimensions (width, height, depth).
         center: (x0, y0) center in the x-y plane.
         R_inner: Inner radius of the mask.
         R_outer: Outer radius of the mask.
 
     Returns:
-        ndarray: (n_nodes, 3) array of node coordinates.
+        ndarray: (n_cells, 3) array of cell coordinates.
     """
 
-    angle = np.random.uniform(0, 2 * np.pi, n_nodes)
-    r = np.sqrt(np.random.uniform(R_inner**2, R_outer**2, n_nodes))
-    z = np.random.uniform(0, shape[2], n_nodes)
+    angle = np.random.uniform(0, 2 * np.pi, n_cells)
+    r = np.sqrt(np.random.uniform(R_inner**2, R_outer**2, n_cells))
+    z = np.random.uniform(0, shape[2], n_cells)
     x0, y0 = center
     x = x0 + r * np.cos(angle)
     y = y0 + r * np.sin(angle)
     return np.stack([x, y, z], axis=1)
 
 
-def random_nodes_spherical(
-    n_nodes: int,
+def random_cells_spherical(
+    n_cells: int,
     shape: Tuple[int, int, int],
     center: Tuple[float, float, float],
     R_inner: float,
     R_outer: float,
 ) -> np.ndarray:
     """
-    Generate nodes uniformly distributed within a spherical mask.
+    Generate cells uniformly distributed within a spherical mask.
 
     Args:
-        n_nodes: Number of nodes to generate.
+        n_cells: Number of cells to generate.
         shape: Grid dimensions (width, height, depth).
         center: (x0, y0, z0) center coordinates.
         R_inner: Inner radius of the mask.
         R_outer: Outer radius of the mask.
 
     Returns:
-        ndarray: (n_nodes, 3) array of node coordinates.
+        ndarray: (n_cells, 3) array of cell coordinates.
     """
     x0, y0, z0 = center
-    r = np.cbrt(np.random.uniform(R_inner**3, R_outer**3, n_nodes))
-    theta = np.random.uniform(0, 2 * np.pi, n_nodes)
-    phi = np.random.uniform(0, np.pi, n_nodes)
+    r = np.cbrt(np.random.uniform(R_inner**3, R_outer**3, n_cells))
+    theta = np.random.uniform(0, 2 * np.pi, n_cells)
+    phi = np.random.uniform(0, np.pi, n_cells)
 
     x = x0 + r * np.sin(phi) * np.cos(theta)
     y = y0 + r * np.sin(phi) * np.sin(theta)
@@ -471,25 +471,25 @@ def random_nodes_spherical(
     return np.stack([x, y, z], axis=1)
 
 
-def random_nodes_cartesian(
-    n_nodes: int,
+def random_cells_cartesian(
+    n_cells: int,
     shape: Tuple[int, int, int],
     center: Tuple[float, float],
     S_inner: float,
     S_outer: float,
 ) -> np.ndarray:
     """
-    Generate nodes uniformly distributed within a Cartesian prismatic shell.
+    Generate cells uniformly distributed within a Cartesian prismatic shell.
 
     Args:
-        n_nodes: Number of nodes to generate.
+        n_cells: Number of cells to generate.
         shape: Grid dimensions (width, height, depth).
         center: (x0, y0) center in the x-y plane.
         S_inner: Inner side length of the exclusion box.
         S_outer: Outer side length of the bounding box.
 
     Returns:
-        ndarray: (n_nodes, 3) array of node coordinates.
+        ndarray: (n_cells, 3) array of cell coordinates.
     """
     x0, y0 = center
 
@@ -501,13 +501,13 @@ def random_nodes_cartesian(
     x_ex_min, x_ex_max = x0 - S_inner / 2, x0 + S_inner / 2
     y_ex_min, y_ex_max = y0 - S_inner / 2, y0 + S_inner / 2
 
-    nodes = []
-    while len(nodes) < n_nodes:
+    cells = []
+    while len(cells) < n_cells:
         x = np.random.uniform(x_min, x_max)
         y = np.random.uniform(y_min, y_max)
         z = np.random.uniform(z_min, z_max)
 
         if not (x_ex_min <= x <= x_ex_max and y_ex_min <= y <= y_ex_max):
-            nodes.append([x, y, z])
+            cells.append([x, y, z])
 
-    return np.array(nodes)
+    return np.array(cells)

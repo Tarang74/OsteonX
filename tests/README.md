@@ -5,42 +5,42 @@ in the `tests/` folder. These figures illustrate the results of various
 analysis methods applied to synthetic data, demonstrating the functionality
 of the `osteonx` package.
 
-## Node Density Analysis
+## Cell Density Analysis
 
-See [test_node_density.py](test_node_density.py).
+See [test_cell_density.py](test_cell_density.py).
 
-### Spheres with Nodes
-
-Geometry:
-
-![Spherical Geometry with Nodes 2D](figures/test_sphere_2d.png)
-![Spherical Geometry with Nodes 3D](figures/test_sphere_3d.png)
-
-Results:
-
-![Node Density Results Spherical](figures/test_sphere_nodes.png)
-
-### Cylinders with Nodes
+### Spheres with Cells
 
 Geometry:
 
-![Cylindrical Geometry with Nodes 2D](figures/test_cylinder_2d.png)
-![Cylindrical Geometry with Nodes 3D](figures/test_cylinder_3d.png)
+![Spherical Geometry with Cells 2D](figures/test_sphere_2d.png)
+![Spherical Geometry with Cells 3D](figures/test_sphere_3d.png)
 
 Results:
 
-![Node Density Results Cylindrical](figures/test_cylinder_nodes.png)
+![Cell Density Results Spherical](figures/test_sphere_cells.png)
 
-### Prisms with Nodes
+### Cylinders with Cells
 
 Geometry:
 
-![Prismatic Geometry with Nodes 2D](figures/test_prism_2d.png)
-![Prismatic Geometry with Nodes 3D](figures/test_prism_3d.png)
+![Cylindrical Geometry with Cells 2D](figures/test_cylinder_2d.png)
+![Cylindrical Geometry with Cells 3D](figures/test_cylinder_3d.png)
 
 Results:
 
-![Node Density Results Prismatic](figures/test_prism_nodes.png)
+![Cell Density Results Cylindrical](figures/test_cylinder_cells.png)
+
+### Prisms with Cells
+
+Geometry:
+
+![Prismatic Geometry with Cells 2D](figures/test_prism_2d.png)
+![Prismatic Geometry with Cells 3D](figures/test_prism_3d.png)
+
+Results:
+
+![Cell Density Results Prismatic](figures/test_prism_cells.png)
 
 ## Segment Surface Density Analysis
 

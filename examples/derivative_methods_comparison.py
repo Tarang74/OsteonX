@@ -2,7 +2,7 @@
 Derivative Methods Comparison Example
 
 This script demonstrates and compares different derivative strategies for density
-profiles in osteon structures using synthetic node data. It includes:
+profiles in osteon structures using synthetic cell data. It includes:
 
 1. Exact derivative of smoothing spline
 2. Backward difference
@@ -11,7 +11,7 @@ profiles in osteon structures using synthetic node data. It includes:
 
 The density is calculated as:
     ρ(t) = N'(t) / V'(t)
-where N(t) is the cumulative node count and V(t) is the cumulative volume.
+where N(t) is the cumulative cell count and V(t) is the cumulative volume.
 """
 
 import argparse
@@ -30,7 +30,7 @@ def parse_arguments():
         description="Compare different smoothing methods for density profiles"
     )
     parser.add_argument(
-        "--nnodes", type=int, default=100000, help="Number of nodes (default: 100000)"
+        "--ncells", type=int, default=100000, help="Number of cells (default: 100000)"
     )
     parser.add_argument(
         "--tsamples",
@@ -61,8 +61,8 @@ def main():
     um_per_voxel = (1.0, 1.0, 1.0)
 
     # Generate synthetic data
-    nodes = generators.random_nodes_cylindrical(
-        args.nnodes, shape, center, R_inner, R_outer
+    cells = generators.random_cells_cylindrical(
+        args.ncells, shape, center, R_inner, R_outer
     )
     outer, inner = generators.cylinders(shape, center, R_outer, R_inner)
     osteon = types.Osteon(
@@ -80,8 +80,8 @@ def main():
     t, phi = analysis.interpolate_surfaces(osteon, dts, tsamples=args.tsamples)
     dt = t[1] - t[0]
 
-    # Count nodes and measure volumes
-    counts, volumes = analysis.find_density(phi, nodes)
+    # Count cells and measure volumes
+    counts, volumes = analysis.find_density(phi, cells)
     volumes_physical = utils.scale_to_physical(volumes, osteon)
 
     # Calculate density from counts and volumes
@@ -145,7 +145,7 @@ def main():
 
     ax1.set_xlabel("Normalised Time")
     ax1.set_ylabel("Count")
-    ax1.set_title("Node Count Comparison")
+    ax1.set_title("Cell Count Comparison")
     ax1.legend()
 
     # Plot volumes
@@ -182,7 +182,7 @@ def main():
     ax.plot(t, fc_density, "m-.", linewidth=2, label="$N'_c(t)/V'_c(t)$")
     ax.plot(t[:-1] + dt / 2, ff_density, "y:", linewidth=2, label="$N'_f(t)/V'_f(t)$")
     ax.set_xlabel("Normalised Time")
-    ax.set_ylabel("Density (nodes/$µm^3$)")
+    ax.set_ylabel("Density (cells/$µm^3$)")
     ax.set_title("Density Comparison")
     ax.legend()
 

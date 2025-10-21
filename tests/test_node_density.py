@@ -1,4 +1,4 @@
-"""Node density tests."""
+"""Cell density tests."""
 
 from pathlib import Path
 
@@ -10,13 +10,13 @@ from osteonx.generators import (
     spheres,
     cylinders,
     prisms,
-    lattice_nodes_spherical,
-    lattice_nodes_cylindrical,
-    lattice_nodes_cartesian,
+    lattice_cells_spherical,
+    lattice_cells_cylindrical,
+    lattice_cells_cartesian,
 )
 from osteonx.analysis import compute_edt, interpolate_surfaces, find_density
 from osteonx.utils import scale_to_physical
-from osteonx.visuals import plot_nodes_with_surface_2d, plot_nodes_3d
+from osteonx.visuals import plot_cells_with_surface_2d, plot_cells_3d
 
 DOWNSCALING = (4, 4, 1)
 SHAPE = (512 // DOWNSCALING[0], 512 // DOWNSCALING[1], 512 // DOWNSCALING[2])
@@ -75,7 +75,7 @@ def test_spheres():
 
     theta_samples = 20
     phi_samples = 15
-    nodes = lattice_nodes_spherical(
+    cells = lattice_cells_spherical(
         SHAPE,
         CENTER,
         outer_radius,
@@ -85,7 +85,7 @@ def test_spheres():
         phi_samples=phi_samples,
     )
 
-    counts, volumes = find_density(phi, nodes)
+    counts, volumes = find_density(phi, cells)
     volumes = scale_to_physical(volumes, osteon, dim=3)
 
     densities = counts / volumes
@@ -105,11 +105,11 @@ def test_spheres():
         assert count == expected_count
         assert np.isclose(volume, expected_volume, rtol=0.1)
 
-    plot_results(t, counts, volumes, densities, "test_sphere_nodes")
-    plot_nodes_with_surface_2d(
-        nodes, phi, layer=SHAPE[2] // 2, out="tests/figures/test_sphere_2d.png"
+    plot_results(t, counts, volumes, densities, "test_sphere_cells")
+    plot_cells_with_surface_2d(
+        cells, phi, layer=SHAPE[2] // 2, out="tests/figures/test_sphere_2d.png"
     )
-    plot_nodes_3d(nodes, phi, out="tests/figures/test_sphere_3d.png", distance=200)
+    plot_cells_3d(cells, phi, out="tests/figures/test_sphere_3d.png", distance=200)
 
 
 def test_cylinders():
@@ -131,7 +131,7 @@ def test_cylinders():
 
     theta_samples = 20
     z_samples = 15
-    nodes = lattice_nodes_cylindrical(
+    cells = lattice_cells_cylindrical(
         SHAPE,
         (CENTER[0], CENTER[1]),
         outer_radius,
@@ -141,7 +141,7 @@ def test_cylinders():
         z_samples=z_samples,
     )
 
-    counts, volumes = find_density(phi, nodes)
+    counts, volumes = find_density(phi, cells)
     volumes = scale_to_physical(volumes, osteon, dim=3)
 
     densities = counts / volumes
@@ -161,11 +161,11 @@ def test_cylinders():
         assert count == expected_count
         assert np.isclose(volume, expected_volume, rtol=0.1)
 
-    plot_results(t, counts, volumes, densities, "test_cylinder_nodes")
-    plot_nodes_with_surface_2d(
-        nodes, phi, layer=0, out="tests/figures/test_cylinder_2d.png"
+    plot_results(t, counts, volumes, densities, "test_cylinder_cells")
+    plot_cells_with_surface_2d(
+        cells, phi, layer=0, out="tests/figures/test_cylinder_2d.png"
     )
-    plot_nodes_3d(nodes, phi, out="tests/figures/test_cylinder_3d.png", distance=600)
+    plot_cells_3d(cells, phi, out="tests/figures/test_cylinder_3d.png", distance=500)
 
 
 def test_prisms():
@@ -188,7 +188,7 @@ def test_prisms():
     x_samples = tsamples - 1
     y_samples = tsamples - 1
     z_samples = 15
-    nodes = lattice_nodes_cartesian(
+    cells = lattice_cells_cartesian(
         SHAPE,
         (CENTER[0], CENTER[1]),
         outer_side,
@@ -198,7 +198,7 @@ def test_prisms():
         z_samples=z_samples,
     )
 
-    counts, volumes = find_density(phi, nodes)
+    counts, volumes = find_density(phi, cells)
     volumes = scale_to_physical(volumes, osteon, dim=3)
 
     densities = counts / volumes
@@ -227,8 +227,8 @@ def test_prisms():
         assert count == expected_count
         assert np.isclose(volume, expected_volume, rtol=0.1)
 
-    plot_results(t, counts, volumes, densities, "test_prism_nodes")
-    plot_nodes_with_surface_2d(
-        nodes, phi, layer=0, out="tests/figures/test_prism_2d.png"
+    plot_results(t, counts, volumes, densities, "test_prism_cells")
+    plot_cells_with_surface_2d(
+        cells, phi, layer=0, out="tests/figures/test_prism_2d.png"
     )
-    plot_nodes_3d(nodes, phi, out="tests/figures/test_prism_3d.png", distance=600)
+    plot_cells_3d(cells, phi, out="tests/figures/test_prism_3d.png", distance=500)

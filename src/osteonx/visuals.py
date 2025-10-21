@@ -7,7 +7,7 @@ from typing import Tuple
 def plot_surfaces_2d(
     phi: np.ndarray,
     layers: Tuple[int] = tuple(),
-    nodes: np.ndarray | None = None,
+    cells: np.ndarray | None = None,
     dims=None,
     out: str | None = None,
 ):
@@ -16,7 +16,7 @@ def plot_surfaces_2d(
     Args:
         phi: 4D array with shape (X, Y, Z, T).
         layers: Z slice indices to plot.
-        nodes: Optional (N, 3) nodes to overlay.
+        cells: Optional (N, 3) cells to overlay.
         dims: Optional (width, height) axis limits.
         out: Optional file path to save the figure.
 
@@ -39,8 +39,8 @@ def plot_surfaces_2d(
         else:
             ax = axs[i // n_cols][i % n_cols]
 
-        if nodes is not None:
-            x, y, z = nodes.T
+        if cells is not None:
+            x, y, z = cells.T
             ax.plot(x, y, ".", markersize=0.5)
 
         for ti in range(tsamples):
@@ -108,8 +108,8 @@ def plot_surfaces_3d(
     return f
 
 
-def plot_nodes_3d(
-    nodes: np.ndarray,
+def plot_cells_3d(
+    cells: np.ndarray,
     phi: np.ndarray | None = None,
     distance: float = 800,
     out: str | None = None,
@@ -120,10 +120,10 @@ def plot_nodes_3d(
     roll: float = -90,
     perspective: bool = True,
 ):
-    """Render nodes and optional zero-level surfaces from a 4D level-set array in 3D using mayavi.
+    """Render cells and optional zero-level surfaces from a 4D level-set array in 3D using mayavi.
 
     Args:
-        nodes: (N, 3) node coordinates.
+        cells: (N, 3) cell coordinates.
         phi: Optional 4D level-set array for contour surfaces.
         distance: Camera distance for the view.
         out: Optional file path to save an offscreen render.
@@ -135,8 +135,8 @@ def plot_nodes_3d(
     """
     f = mlab.figure(size=(1000, 800), bgcolor=(1, 1, 1))
 
-    # Plot nodes as points
-    x, y, z = nodes.T
+    # Plot cells as points
+    x, y, z = cells.T
     mlab.points3d(x, y, z, scale_factor=1, color=(0, 0, 0), opacity=0.5)
 
     # Plot surfaces
@@ -192,7 +192,7 @@ def plot_segments_3d(
     """
     f = mlab.figure(size=(1000, 800), bgcolor=(1, 1, 1))
 
-    # Plot nodes as points
+    # Plot cells as points
     mlab.quiver3d(
         segments[:, 0],
         segments[:, 1],
@@ -229,18 +229,18 @@ def plot_segments_3d(
     return f
 
 
-def plot_nodes_with_surface_2d(
-    nodes: np.ndarray,
+def plot_cells_with_surface_2d(
+    cells: np.ndarray,
     phi: np.ndarray,
     layer: int,
     dims=None,
     out: str | None = None,
 ):
-    """Plot nodes overlaid on zero-level contours for a level-set array in 2D.
+    """Plot cells overlaid on zero-level contours for a level-set array in 2D.
 
     Args:
         phi: 4D array with shape (X, Y, Z, T).
-        nodes: (N, 3) node coordinates.
+        cells: (N, 3) cell coordinates.
         layer: Z slice index to plot.
         dims: Optional (width, height) axis limits.
         out: Optional file path to save the figure.
@@ -250,9 +250,9 @@ def plot_nodes_with_surface_2d(
     """
     fig, ax = plot_surfaces_2d(phi, layers=(layer,), dims=dims)
 
-    # Filter nodes to the specified layer
-    nodes_in_layer = nodes[np.abs(nodes[:, 2] - layer) < 5]
-    ax.scatter(nodes_in_layer[:, 1], nodes_in_layer[:, 0], c="red", s=10)
+    # Filter cells to the specified layer
+    cells_in_layer = cells[np.abs(cells[:, 2] - layer) < 5]
+    ax.scatter(cells_in_layer[:, 1], cells_in_layer[:, 0], c="red", s=10)
 
     if out:
         fig.savefig(out, dpi=300, bbox_inches="tight")

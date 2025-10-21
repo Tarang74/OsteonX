@@ -7,7 +7,7 @@ quantification of cellular and dendritic densities via interpolated 3D
 Euclidean distance transforms (MLAEDT-3D).
 
 This library extends the Tool for Image and Network Analysis (TINA)
-software by providing an interface for importing image and node/segment
+software by providing an interface for importing image and cell/segment
 data, as well as a novel set of tools to approximate the geometry of
 lamellar surfaces using a [Multi-Label Anisotropic 3D Euclidean Distance
 Transform (MLAEDT-3D)](https://github.com/seung-lab/euclidean-distance-transform-3d/).
@@ -94,13 +94,13 @@ Three example scripts are provided in the [examples/](examples/) directory:
 
    ![Lamellar Growth Approximation Example](examples/figures/lamellar_growth_2d.png)
 
-2. **`node_density_analysis.py`** - Osteocyte density analysis
+2. **`cell_density_analysis.py`** - Osteocyte density analysis
 
    ```bash
-   python examples/node_density_analysis.py --help
+   python examples/cell_density_analysis.py --help
    ```
 
-   ![Node Density Analysis Example](examples/figures/node_density.png)
+   ![Cell Density Analysis Example](examples/figures/cell_density.png)
 
 3. **`segment_surface_density_analysis.py`** - Dendritic surface density analysis
 
@@ -123,7 +123,7 @@ Three example scripts are provided in the [examples/](examples/) directory:
 This package uses `pytest` to test the analysis methods on synthetic
 data. Synthetic data is generated inside the `generators` module, which
 includes functions to create spherical, cylindrical, and prismatic
-geometries. It also generates synthetic node and segment data arranged
+geometries. It also generates synthetic cell and segment data arranged
 within a lattice or uniformly distributed within the specified volume.
 
 These tests can be run using:

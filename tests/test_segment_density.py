@@ -178,7 +178,7 @@ def test_cylinder_edges():
         segments, deltas, phi, layer=0, out="tests/figures/test_cylinder_segments_2d.png"
     )
     plot_segments_3d(
-        segments, deltas, phi, out="tests/figures/test_cylinder_segments_3d.png", distance=600
+        segments, deltas, phi, out="tests/figures/test_cylinder_segments_3d.png", distance=500
     )
 
 
@@ -232,5 +232,5 @@ def test_prism_edges():
         segments, deltas, phi, layer=0, out="tests/figures/test_prism_segments_2d.png"
     )
     plot_segments_3d(
-        segments, deltas, phi, out="tests/figures/test_prism_segments_3d.png", distance=600
+        segments, deltas, phi, out="tests/figures/test_prism_segments_3d.png", distance=500
     )
