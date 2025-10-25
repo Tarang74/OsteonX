@@ -15,6 +15,8 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
+plt.rcParams['font.family'] = 'serif'
+
 from osteonx import analysis, io, visuals, utils
 
 plt.ioff()
@@ -196,7 +198,7 @@ def main():
     ax.plot(t2, density_smooth, "r-", linewidth=2, label="$\\tilde\\rho(t)$")
     ax.set_xlabel("Normalised Time", fontsize=12)
     ax.set_ylabel("Density ($cell/µm^3$)", fontsize=12)
-    ax.set_title("Cell Density", fontsize=14, fontweight="bold")
+    # ax.set_title("Cell Density", fontsize=14, fontweight="bold")
     ax.legend()
 
     plt.tight_layout()
@@ -211,6 +213,7 @@ def main():
     fig = visuals.plot_cells_3d(
         cells=cells,
         phi=phi,
+        perspective=False,
         out=str(figures_output_path / "cells_3d.png"),
     )
 

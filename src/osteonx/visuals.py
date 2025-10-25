@@ -133,11 +133,11 @@ def plot_cells_3d(
     Returns:
         mayavi.mlab.Figure or None: The mayavi figure if rendering succeeded.
     """
-    f = mlab.figure(size=(1000, 800), bgcolor=(1, 1, 1))
+    f = mlab.figure(size=(1000, 1000), bgcolor=(1, 1, 1))
 
     # Plot cells as points
     x, y, z = cells.T
-    mlab.points3d(x, y, z, scale_factor=1, color=(0, 0, 0), opacity=0.5)
+    mlab.points3d(x, y, z, scale_factor=1.5, color=(0, 0, 0), opacity=0.5)
 
     # Plot surfaces
     if phi is not None:
@@ -155,7 +155,7 @@ def plot_cells_3d(
     f.scene.parallel_projection = not perspective  # type: ignore
 
     if out:
-        mlab.savefig(out, size=(1000, 800))
+        mlab.savefig(out, size=(1000, 1000))
         mlab.close(all=True)
     else:
         mlab.show()
@@ -190,7 +190,7 @@ def plot_segments_3d(
     Returns:
         mayavi.mlab.Figure or None: The mayavi figure if rendering succeeded.
     """
-    f = mlab.figure(size=(1000, 800), bgcolor=(1, 1, 1))
+    f = mlab.figure(size=(1000, 1000), bgcolor=(1, 1, 1))
 
     # Plot cells as points
     mlab.quiver3d(
@@ -221,7 +221,7 @@ def plot_segments_3d(
     f.scene.parallel_projection = not perspective  # type: ignore
 
     if out:
-        mlab.savefig(out, size=(1000, 800))
+        mlab.savefig(out, size=(1000, 1000))
         mlab.close(all=True)
     else:
         mlab.show()

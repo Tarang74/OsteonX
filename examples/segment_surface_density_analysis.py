@@ -15,6 +15,8 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
+plt.rcParams['font.family'] = 'serif'
+
 from osteonx import analysis, io, visuals, utils
 
 plt.ioff()
@@ -180,7 +182,7 @@ def main():
     ax.plot(t2, surface_density_smooth, "r-", linewidth=2, label="$\\tilde\\rho_A(t)$")
     ax.set_xlabel("Normalised Time", fontsize=12)
     ax.set_ylabel("Surface Density ($intersection/µm^2$)", fontsize=12)
-    ax.set_title("Segment Intersection Surface Density", fontsize=14, fontweight="bold")
+    # ax.set_title("Segment Intersection Surface Density", fontsize=14, fontweight="bold")
     ax.legend()
 
     plt.tight_layout()
@@ -196,6 +198,7 @@ def main():
         segments=segments,
         deltas=deltas,
         phi=phi,
+        perspective=False,
         out=str(figures_output_path / "segment_3d.png"),
     )
 
